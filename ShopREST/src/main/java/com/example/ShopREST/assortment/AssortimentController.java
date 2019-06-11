@@ -3,6 +3,7 @@ package com.example.ShopREST.assortment;
 import com.example.ShopREST.ResourceNotFoundException;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,13 +18,15 @@ public class AssortimentController {
 
     //Get ALL ASSORTIMENT
 
+    @GetMapping("/assortiments")
     public List<Assortment> getAllAssortiments() {
+
         return assortimentRepository.findAll();
     }
 
     //Add a new assortiment to database
 
-    @PostMapping("Assortiment")
+    @PostMapping("assortiments")
     public Assortment createAssortiment(@Valid @RequestBody Assortment assortment) {
         return assortimentRepository.save(assortment);
     }
@@ -49,6 +52,16 @@ public class AssortimentController {
 
         Assortment updatedAssortiment = assortimentRepository.save(assortment);
         return updatedAssortiment;
+    }
+
+    @DeleteMapping("/assortiments.{id}")
+    public ResponseEntity<?> deleteAssortiment(@PathVariable(value = "id") Long assortimentId) {
+        Assortment assortment = assortimentRepository.findById(assortimentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Assortiment", "id", assortimentId));
+
+        assortimentRepository.delete(assortment);
+
+        return ResponseEntity.ok().build();
     }
 
 }
